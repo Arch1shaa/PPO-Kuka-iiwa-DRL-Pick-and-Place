@@ -13,7 +13,7 @@ This project implements a reinforcement learning system for robotic grasping usi
 
 ## Demo Video
 
-[![Watch the video](vodeo.png)]
+![Watch the video](vodeo.png)
 (https://youtu.be/QAKlS_Xm9l8?si=7lwfycuQvNhlpUBT)
 ## Environment Details
 
