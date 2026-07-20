@@ -7,7 +7,7 @@ from custom_env import env, device
 import matplotlib.pyplot as plt
 from tensorboardX import SummaryWriter
 import torch.nn.functional as F
-
+import pybullet as p
 # Set device to GPU if available
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # print("Using device:", device)
@@ -77,13 +77,19 @@ def collect_trajectories(envs, policy, tmax, nrand=5):
         done_list.append(dones)
 
         if np.any(dones.cpu().numpy()):
+            print("DONE REACHED")
+            print("CONNECTED BEFORE RESET:", p.isConnected())
+
+            state = envs.reset()
+
+            print("CONNECTED AFTER RESET:", p.isConnected())
+
             ten_rewards += reward
             i_episode += 1
-            state = envs.reset()
+
             if i_episode % 10 == 0:
                 writer.add_scalar('ten episodes average rewards', ten_rewards / 10.0, i_episode)
                 ten_rewards = 0
-
     state_list = torch.cat(state_list, dim=0)
     prob_list = torch.cat(prob_list, dim=0)
     action_list = torch.cat(action_list, dim=0)
@@ -130,7 +136,9 @@ def calc_returns(rewards, values, dones):
 def eval_policy(env, policy, tmax):
     """Evaluates the policy by running it in the environment for a set number of timesteps."""
     rewards_list = []
+    print("connected:", p.isConnected())
     state = env.reset()
+    print("after reset:", p.isConnected())
     for t in range(tmax):
         states = get_screen().to(device)
         action_est, _ = policy(states)

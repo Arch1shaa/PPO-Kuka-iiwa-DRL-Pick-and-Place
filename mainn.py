@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import utils
 from model import ActorCritic
+import pybullet as p
 
 from utils import calc_returns
 from custom_env import env, device
@@ -54,7 +55,7 @@ save_scores, mean_rewards, seasons = [], [], []
 best_mean_reward = -float('inf')
 
 # Load checkpoint
-checkpoint = torch.load(path)
+checkpoint = torch.load(path, map_location=torch.device("cpu"), weights_only=False)
 policy.load_state_dict(checkpoint['policy_state_dict'])
 optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 seasons = checkpoint['seasons']
@@ -68,25 +69,26 @@ best_mean_reward = np.max(mean_rewards)
 best_season_reward = -float('inf')
 
 # Plot Beta Decay and Epsilon Decay
-plt.figure(figsize=(10, 6))
+#plt.figure(figsize=(10, 6))
 
 # Beta Decay
-plt.plot(seasons, betas, label='Beta Decay', linestyle='-', linewidth=2)
+#plt.plot(seasons, betas, label='Beta Decay', linestyle='-', linewidth=2)
 
 # Epsilon Decay
-plt.plot(seasons, epsilons, label='Epsilon Decay', linestyle='--', linewidth=2)
+#plt.plot(seasons, epsilons, label='Epsilon Decay', linestyle='--', linewidth=2)
 
-plt.title("Beta and Epsilon Decay Over Seasons")
-plt.xlabel("Seasons")
-plt.ylabel("Values")
-plt.legend()
-plt.grid()
-plt.show()
+#plt.title("Beta and Epsilon Decay Over Seasons")
+#plt.xlabel("Seasons")
+#plt.ylabel("Values")
+#plt.legend()
+#plt.grid()
+#plt.show()
 
 
 for s in range(seasons[-1] + 1, season + 1):
     season_start_time = time.time()
     policy.eval()
+    print("connected:",p.isConnected())
     old_probs_lst, states_lst, actions_lst, rewards_lst, values_lst, dones_list = collect_trajectories(env, policy, tmax)
 
     # Calculate reward and append scores

@@ -1,0 +1,7 @@
+venv/
+voice_robot_arm/venv/
+__pycache__/
+*.pyc
+events.out.tfevents.*
+*.wav
+runs/
